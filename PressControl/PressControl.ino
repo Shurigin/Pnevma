@@ -54,7 +54,7 @@ void setup() {
 void loop() {
   //#7скореевсего будут условия работы подвески{
   levelControlFuncFL(timeSet, timeSetValveOn, levelSensorFL,  levelDelta, levelSet);  //регулирования левого переднего балона
-  //#3вставить фунцкию levelControlFuncFR(); регулирования правого переднего балона
+  //levelControlFuncFL(timeSet, timeSetValveOn, levelSensorFR,  levelDelta, levelSet);  //#3вставить фунцкию levelControlFuncFR(); регулирования правого переднего балона
   //#4вставить фунцкию levelControlFuncRL(); регулирования левого заднего балона
   //#5вставить фунцкию levelControlFuncRR(); регулирования правого заднего балона
   //}
