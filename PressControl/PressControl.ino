@@ -54,7 +54,7 @@ void setup() {
 void loop() {
   //#7скореевсего будут условия работы подвески{
   levelControlFuncFL(timeSet, timeSetValveOn, levelSensorFL,  levelDelta, levelSet);  //регулирования левого переднего балона
-  //levelControlFuncFL(timeSet, timeSetValveOn, levelSensorFR,  levelDelta, levelSet);  //#3вставить фунцкию levelControlFuncFR(); регулирования правого переднего балона
+  levelControlFuncFR(timeSet, timeSetValveOn, levelSensorFR,  levelDelta, levelSet);  //#3 вставить фунцкию levelControlFuncFR(); регулирования правого переднего балона
   //#4вставить фунцкию levelControlFuncRL(); регулирования левого заднего балона
   //#5вставить фунцкию levelControlFuncRR(); регулирования правого заднего балона
   //}
@@ -68,28 +68,51 @@ void levelControlFuncFL(int timeSetF, int timerValveOnF, int levelSensorFLF, int
    int levelInMod = map(levelIn, 0, 1023, 0, 500);
  if (timer.onRestart()) {
     if ( levelSetF - levelDeltaF > levelInMod ) {     //Условие включения накачки
-      digitalWrite(pinValFill, HIGH);
-      digitalWrite(pinValFL, HIGH);
-      timerValveOn.setTimeout(timerValveOnF);
+        digitalWrite(pinValFill, HIGH);
+        digitalWrite(pinValFL, HIGH);
+        timerValveOn.setTimeout(timerValveOnF);
+       //test = 50;
+     }
+    
+    if ( levelSetF + levelDeltaF < levelInMod ) {
+        digitalWrite(pinValEmpt, HIGH);
+        digitalWrite(pinValFL, HIGH);
+     }
+   }
+  if(timerValveOn.onRestart()) {
+      digitalWrite(pinValFill, LOW);
+      digitalWrite(pinValEmpt, LOW);
+      digitalWrite(pinValFL, LOW);
+    }
+  }
+ 
+void  levelControlFuncFR(int timeSetF, int timerValveOnF, int levelSensorFRF,  int levelDeltaF, int levelSetF) {
+  timer.setTimeout(timeSetF);
+  int levelIn = average.update( analogRead(levelSensorFRF) );
+  int levelInMod = map(levelIn, 0, 1023, 0, 500);
+  if (timer.onRestart()) {
+    if ( levelSetF - levelDeltaF > levelInMod ) {     //Условие включения накачки
+        digitalWrite(pinValFill, HIGH);
+        digitalWrite(pinValFR, HIGH);
+        timerValveOn.setTimeout(timerValveOnF);
       //test = 50;
      }
     
     if ( levelSetF + levelDeltaF < levelInMod ) {
-      digitalWrite(pinValEmpt, HIGH);
-      digitalWrite(pinValFL, HIGH);
+        digitalWrite(pinValEmpt, HIGH);
+        digitalWrite(pinValFL, HIGH);
      }
    }
-  if(timerValveOn.onRestart()) {
-    digitalWrite(pinValFill, LOW);
-    digitalWrite(pinValEmpt, LOW);
-    digitalWrite(pinValFL, LOW);
+
+   if(timerValveOn.onRestart()) {
+      digitalWrite(pinValFill, LOW);
+      digitalWrite(pinValEmpt, LOW);
+      digitalWrite(pinValFL, LOW);
     }
   }
+  
+  
  /* 
- * void levelControlFuncFR(int) {
- * 
- * }
- * 
  * void levelControlFuncRL(){
  * 
  * }
