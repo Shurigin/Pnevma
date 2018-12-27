@@ -55,8 +55,8 @@ void loop() {
   //#7скореевсего будут условия работы подвески{
   levelControlFuncFL(timeSet, timeSetValveOn, levelSensorFL,  levelDelta, levelSet);  //регулирования левого переднего балона
   levelControlFuncFR(timeSet, timeSetValveOn, levelSensorFR,  levelDelta, levelSet);  //#3 вставить фунцкию levelControlFuncFR(); регулирования правого переднего балона
-  //#4вставить фунцкию levelControlFuncRL(); регулирования левого заднего балона
-  //#5вставить фунцкию levelControlFuncRR(); регулирования правого заднего балона
+  levelControlFuncRL(timeSet, timeSetValveOn, levelSensorRL,  levelDelta, levelSet);  //#4вставить фунцкию levelControlFuncRL(); регулирования левого заднего балона
+  levelControlFuncRR(timeSet, timeSetValveOn, levelSensorRR,  levelDelta, levelSet); //#5вставить фунцкию levelControlFuncRR(); регулирования правого заднего балона
   //}
   compresorControlFunc(compressorPinA, pinDCompressor, pressureHighLevel, pressureLowLevel);
 
@@ -100,30 +100,72 @@ void  levelControlFuncFR(int timeSetF, int timerValveOnF, int levelSensorFRF,  i
     
     if ( levelSetF + levelDeltaF < levelInMod ) {
         digitalWrite(pinValEmpt, HIGH);
-        digitalWrite(pinValFL, HIGH);
+        digitalWrite(pinValFR, HIGH);
      }
    }
 
    if(timerValveOn.onRestart()) {
       digitalWrite(pinValFill, LOW);
       digitalWrite(pinValEmpt, LOW);
-      digitalWrite(pinValFL, LOW);
+      digitalWrite(pinValFR, LOW);
     }
   }
   
   
- /* 
- * void levelControlFuncRL(){
- * 
- * }
- * 
- *void levelControlFuncRR(){
- *
- *}
- * 
- * 
- * 
- */
+ 
+ void  levelControlFuncRL(int timeSetF, int timerValveOnF, int levelSensorRLF,  int levelDeltaF, int levelSetF) {
+  timer.setTimeout(timeSetF);
+  int levelIn = average.update( analogRead(levelSensorRLF) );
+  int levelInMod = map(levelIn, 0, 1023, 0, 500);
+  if (timer.onRestart()) {
+    if ( levelSetF - levelDeltaF > levelInMod ) {     //Условие включения накачки
+        digitalWrite(pinValFill, HIGH);
+        digitalWrite(pinValRL, HIGH);
+        timerValveOn.setTimeout(timerValveOnF);
+      //test = 50;
+     }
+    
+    if ( levelSetF + levelDeltaF < levelInMod ) {
+        digitalWrite(pinValEmpt, HIGH);
+        digitalWrite(pinValRL, HIGH);
+     }
+   }
+
+   if(timerValveOn.onRestart()) {
+      digitalWrite(pinValFill, LOW);
+      digitalWrite(pinValEmpt, LOW);
+      digitalWrite(pinValRL, LOW);
+    }
+  }
+
+
+  
+ void  levelControlFuncRR(int timeSetF, int timerValveOnF, int levelSensorRRF,  int levelDeltaF, int levelSetF) {
+  timer.setTimeout(timeSetF);
+  int levelIn = average.update( analogRead(levelSensorRRF) );
+  int levelInMod = map(levelIn, 0, 1023, 0, 500);
+  if (timer.onRestart()) {
+    if ( levelSetF - levelDeltaF > levelInMod ) {     //Условие включения накачки
+        digitalWrite(pinValFill, HIGH);
+        digitalWrite(pinValRR, HIGH);
+        timerValveOn.setTimeout(timerValveOnF);
+      //test = 50;
+     }
+    
+    if ( levelSetF + levelDeltaF < levelInMod ) {
+        digitalWrite(pinValEmpt, HIGH);
+        digitalWrite(pinValRR, HIGH);
+     }
+   }
+
+   if(timerValveOn.onRestart()) {
+      digitalWrite(pinValFill, LOW);
+      digitalWrite(pinValEmpt, LOW);
+      digitalWrite(pinValRR, LOW);
+    }
+  }
+
+ 
 void compresorControlFunc(int compressorPinAF, int pinDCompressorF, int pressureHighLevelF, int pressureLowLevelF) {
 
   int valAnalog0;                                            //Промежуточная переменная хронящая значение давления(необработанная)
